@@ -1,21 +1,44 @@
 package ee.skev.veebipood.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import ee.skev.veebipood.entity.Product;
 import ee.skev.veebipood.repository.ProductRepository;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;  // !!!!!!!!!!!!!
+import org.springframework.data.domain.Pageable; // !!!!!!!!!!!!!
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // turvaviga, päris arendustes seda ei teeks
+// @CrossOrigin(origins = "http://localhost:5173").
+// @CrossOrigin(origins = "https://www.arvutitark.ee").
 @RestController
 public class ProductController {
+    // localhost:8080/products
+    // application.properties  server.port=8090
+//    @GetMapping("products")
+//    public String helloworld(){
+//        return "Hello World";
+//    }
+
+    // 1xx -> (harva) informatiivne
+    // 2xx -> õnnestuv
+    // 3xx -> (harva) redirect
+    // 4xx -> päringu tegija (client error / front-end error)
+    // 5xx -> päringu vastuvõtja viga (server error)
 
     @Autowired
     private ProductRepository productRepository;
 
+    // localhost:8080/products?page=0&size=4&sort=price,asc
     @GetMapping("products")
-    public List<Product> getProducts(){
+    public Page<@NonNull Product> getProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @GetMapping("products/admin")
+    public List<Product> getAdminProducts(){
         return productRepository.findAll();
     }
 
